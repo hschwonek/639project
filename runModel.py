@@ -77,6 +77,7 @@ def classify(predictions):
         with open(CLASSES_PATH) as classes:
             class_names = json.load(classes)
 
+        # TODO: Dont like how this looks think of a better way
         # Print the top three classes for the prediction
         ids = []
         inds = inds.tolist()
