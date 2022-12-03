@@ -1,20 +1,37 @@
 import json
 import logging as log
-import matplotlib.pyplot as plt
 import torch
+import sys
+
+from constants import *
+from PIL import Image
+from torchvision import datasets, transforms
+from torchvision.models import resnet18, alexnet
 
 from utils import load_model
-from torchvision import datasets, transforms
-from torchvision.models import resnet18
 
 
-def load_model_and_data(model, filename, use_gpu):
-    log.info("Starting loads ...")
+def load(filename, use_gpu, model_type):
+    log.info("Starting loads ----------------------------------")
 
-    # Load the model onto GPU if possible
+    # Create model 
+    model = None
+    match model_type:
+        case 'resnet':
+            model = resnet18(num_classes = NUM_CLASSES)
+        case 'alexnet':
+            model = alexnet(num_classes = NUM_CLASSES)
+        case _:
+            model = resnet18(num_classes = NUM_CLASSES)
+    
+    # Load the model onto GPU if possible otherwise on the cpu
     load_model(model, filename=filename, use_gpu=use_gpu)
-    log.info("Model Loaded")
+    log.info("Model loaded")
 
+    return model
+
+
+def get_image():
     # Basic transform to be used on images in dataset
     transform = transforms.Compose([
         transforms.Resize(255),
@@ -23,58 +40,78 @@ def load_model_and_data(model, filename, use_gpu):
     ])
 
     # Load the dataset applying the transform to each image
-    dataset = datasets.ImageFolder(
-        'C:/Users/hosch/Documents/cs639/plantnet/PlantNet-300K/images',
+    predict_images = datasets.ImageFolder(
+        'user_images',
         transform=transform
     )
-    log.info("Dataset Loaded\nLoads Complete")
+    log.info("Images for prediction loaded")
 
-    return model, dataset
+    return predict_images
 
+
+def predict(model):
+    # Load an image and set model to evaluation mode
+    log.info("Obtaining images for prediction")
+    images = get_image()
+
+    model.eval()   
+    log.info("Model set to evaluation mode")
+
+    # Predict probabilities for each image
+    predictions = [model(image[0].unsqueeze(0)) for image in images]
+    log.info("Predictions Complete:")
+    log.info(predictions)
+
+    return predictions
+
+def classify(predictions):
+    # Classify the top three predicttions
+    for i in range(len(predictions)):
+        print(f"Image #{i} Prediction: ----------------------------------')")
+
+        prob = torch.nn.functional.softmax(predictions[i], 1)
+        max, inds = torch.topk(prob[0], 3)
+
+        # Load the class names as a dictionary of values
+        class_names = {}
+        with open(CLASSES_PATH) as classes:
+            class_names = json.load(classes)
+
+        # Print the top three classes for the prediction
+        ids = []
+        inds = inds.tolist()
+        max = max.tolist()
+        for key in class_names.keys():
+            ids.append(key)
+
+        for i in range(3):
+            index = inds[i]
+            print(f"{class_names[ids[index]]}: {max[i]*100:.2f}%")
+        print()
 
 def main():
     # Debug Logging Settings
-    log.basicConfig(filename='prediction.log', level=log.DEBUG)
-    log.info('Logging started...')
+    # TODO: Change from "full" to "defualt"
+    log.basicConfig(filename='prediction.log', level=log.DEBUG, filemode='w')
+    torch.set_printoptions(profile="full")
+    log.info('Logging started ----------------------------------')
+
+    if len(sys.argv) != 2:
+        print("ERROR: Please provide a model name as argument")
+        sys.exit(1)
 
     # General Model Settings
-    filename = 'models/resnet18_weights_best_acc.tar'       # Path to model
-    use_gpu = True                                          # Use GPU
+    model_type = sys.argv[1]
+    filename = MODELS[model_type] # Path to model
+    use_gpu = True                # Use GPU
     
-    # create generic resnet18 model with 1081 classes as defined by Pl@ntNet Dataset
-    model = resnet18(num_classes=1081)
-
     # Load the model and the dataset
-    model, dataset = load_model_and_data(model, filename, use_gpu)
+    model = load(filename, use_gpu, model_type)
 
-    # Load an image to for prediction
-    image = dataset[1][0]   
-    model.eval()            
+    # Make a prediction with model
+    predictions = predict(model)
 
-    # Predict probabilities for every class
-    prediction = model(image.unsqueeze(0))
-    print(prediction)
-
-    # Find the top three probabilites 
-    prob = torch.nn.functional.softmax(prediction, 1)
-    max, inds = torch.topk(prob[0], 3)
-    print(torch.topk(prob[0], 3))
-
-    # Load the class names as a dictionary of values
-    class_names = {}
-    with open('data/plantnet300k_species_id_2_name.json') as classes:
-        class_names = json.load(classes)
-
-    # Print the top three classes for the prediction
-    ids = []
-    inds = inds.tolist()
-    max = max.tolist()
-    for key in class_names.keys():
-        ids.append(key)
-
-    for i in range(3):
-        index = inds[i]
-        print(f"{class_names[ids[index]]}: {max[i]*100:.2f}%")
+    classify(predictions)
 
 
 if __name__ == "__main__":
