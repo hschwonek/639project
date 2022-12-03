@@ -31,5 +31,5 @@ All models need to be organized in the following way:
     |	models
     |	|	alexnet_weights_best_acc.tar
     |	|	resnet18_weights_best_acc.tar
-    |	|   etc.
+    |	|	etc.
 
