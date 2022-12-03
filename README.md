@@ -17,7 +17,7 @@ Once the images are correctly organized. A user can run the following command to
   
 The `"<model_name>"` parameter must be specified for the program to execute. The supported models are listed in the **Supported Models** section.
 ## Supported Models
-We currently support the following models:
+We currently support the following models however each model must be downloaded as they are too large to upload to github. Organization of the models is described below:
 
  - Resnet18 (Pl@ntNet): `python3 .\runModel.py resnet`
 	 - Download Link: https://lab.plantnet.org/seafile/d/01ab6658dad6447c95ae/files/?p=%2Fresnet18_weights_best_acc.tar
