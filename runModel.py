@@ -21,8 +21,11 @@ def load(filename, use_gpu, model_type):
             model = resnet18(num_classes = NUM_CLASSES)
         case 'alexnet':
             model = alexnet(num_classes = NUM_CLASSES)
-        case _:
+        case 'custom_resnet':
             model = resnet18(num_classes = NUM_CLASSES)
+        case _:
+            log.error("ERROR: Invalid model type")
+            sys.exit(1)
     
     # Load the model onto GPU if possible otherwise on the cpu
     load_model(model, filename=filename, use_gpu=use_gpu)
@@ -77,7 +80,7 @@ def classify(predictions):
         with open(CLASSES_PATH) as classes:
             class_names = json.load(classes)
 
-        # TODO: Dont like how this looks think of a better way
+        # TODO: Dont like how this looks want to think of a better way
         # Print the top three classes for the prediction
         ids = []
         inds = inds.tolist()

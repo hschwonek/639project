@@ -1,7 +1,8 @@
 # MODELS
 MODELS = {
     'resnet': 'models/resnet18_weights_best_acc.tar',
-    'alexnet': 'models/alexnet_weights_best_acc.tar'
+    'alexnet': 'models/alexnet_weights_best_acc.tar',
+    'custom_resnet': 'models/custom_resnet18_weights_best_acc.tar'
 }
 
 # CLASSES

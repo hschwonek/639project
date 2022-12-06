@@ -131,6 +131,7 @@ dmypy.json
 # data and models
 data/
 models/
+results/
 
 # logs
 .log
