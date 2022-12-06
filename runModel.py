@@ -4,7 +4,6 @@ import torch
 import sys
 
 from constants import *
-from PIL import Image
 from torchvision import datasets, transforms
 from torchvision.models import resnet18, alexnet
 
@@ -86,11 +85,11 @@ def classify(predictions):
 
 def main():
     # Debug Logging Settings
-    # TODO: Change from "full" to "defualt"
     log.basicConfig(filename='prediction.log', level=log.DEBUG, filemode='w')
-    torch.set_printoptions(profile="full")
+    torch.set_printoptions(profile="default")
     log.info('Logging started ----------------------------------')
-
+ 
+    # Check parameters
     if len(sys.argv) != 2:
         print("ERROR: Please provide a model name as argument")
         sys.exit(1)
@@ -106,6 +105,7 @@ def main():
     # Make a prediction with model
     predictions = predict(model)
 
+    # Display the results
     classify(predictions)
 
 
