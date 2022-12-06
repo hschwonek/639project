@@ -80,17 +80,11 @@ def classify(predictions):
         with open(CLASSES_PATH) as classes:
             class_names = json.load(classes)
 
-        # TODO: Dont like how this looks want to think of a better way
         # Print the top three classes for the prediction
-        ids = []
-        inds = inds.tolist()
-        max = max.tolist()
-        for key in class_names.keys():
-            ids.append(key)
+        ids = [key for key in class_names.keys()]
 
-        for i in range(3):
-            index = inds[i]
-            print(f"{class_names[ids[index]]}: {max[i]*100:.2f}%")
+        # Print the top 3 %'s of the prediction
+        print(*(f"{class_names[ids[inds[i]]]}: {max[i]*100:.2f}%" for i in range(3)), sep='\n')
         print()
 
 def main():
