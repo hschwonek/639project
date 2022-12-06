@@ -44,7 +44,7 @@ def get_image():
 
     # Load the dataset applying the transform to each image
     predict_images = datasets.ImageFolder(
-        'user_images',
+        USER_IMAGES_PATH,
         transform=transform
     )
     log.info("Images for prediction loaded")
