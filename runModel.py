@@ -72,7 +72,7 @@ def classify(predictions):
         print(f"Image #{i} Prediction: ----------------------------------')")
 
         prob = torch.nn.functional.softmax(predictions[i], 1)
-        max, inds = torch.topk(prob[0], 3)
+        max, inds = torch.topk(prob[0], TOP_K)
 
         # Load the class names as a dictionary of values
         class_names = {}
@@ -81,7 +81,7 @@ def classify(predictions):
 
         # Print the top three classes and their % prediction
         ids = [key for key in class_names.keys()]
-        print(*(f"{class_names[ids[inds[i]]]}: {max[i]*100:.2f}%" for i in range(3)), sep='\n', end='\n\n')
+        print(*(f"{class_names[ids[inds[i]]]}: {max[i]*100:.2f}%" for i in range(TOP_K)), sep='\n', end='\n\n')
 
 def main():
     # Debug Logging Settings
