@@ -23,7 +23,8 @@ We currently support the following models however each model must be downloaded 
 	 - Download Link: https://lab.plantnet.org/seafile/d/01ab6658dad6447c95ae/files/?p=%2Fresnet18_weights_best_acc.tar
  - Alexnet (Pl@ntNet): `python3 .\runModel.py alexnet`
 	 - Download Link: https://lab.plantnet.org/seafile/d/01ab6658dad6447c95ae/file/?p=%2Falexnet_weights_best_acc.tar
- - #TBD
+ - Custom Resnet18 (Self-Trained): `python3 .\runModel.py custom_resnet`
+ 	 - Download Link: https://drive.google.com/file/d/1b-iWFvVG5M2Nr_W2plfn8IG_h-BLrOXW/view?usp=sharing
 
 All models need to be organized in the following way:
 
